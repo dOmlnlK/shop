@@ -1,0 +1,115 @@
+<layout name="layout"/>
+
+
+
+<!-- 商品列表 -->
+<form method="post" action="" name="listForm" onsubmit="">
+    <div class="list-div" id="listDiv">
+        <table cellpadding="3" cellspacing="1">
+            <tr>
+                <?php foreach($data as $attr_name=>$attr):?>
+                <th><{$attr_name}></th>
+                <?php endforeach?>
+
+                <th>库存量</th>
+                <th>操作</th>
+            </tr>
+
+            <?php if(!$gn_list):?>
+            <tr class="tron">
+                <?php foreach($data as $attr):?>
+                <td align="center">
+                    <select name="attr_ids[]">
+                        <option>请选择...</option>
+                        <?php foreach($attr as $v):
+                        $_attr = explode(',',$gn['goods_attr_id']);
+                        if(in_array($v['id'],$_attr)){
+                            $select = 'selected=selected';
+                        }else{
+                            $select = '';
+                        }
+
+                    ?>
+                        <option value="<{$v.id}>" <{$select}>><{$v.attr_value}></option>
+                        <?php endforeach?>
+                    </select>
+                </td>
+                <?php endforeach?>
+                <td align="center">
+                    <input type="text" name="goods_num[]" value="<{$gn.goods_number}>">
+                </td>
+                <td align="center">
+                    <input type="button" value="+" onclick="addNewTr(this)">
+                </td>
+
+            </tr>
+            <?php endif?>
+
+            <?php foreach($gn_list as $key=>$gn):?>
+            <tr class="tron">
+                <?php foreach($data as $attr):?>
+                <td align="center">
+                    <select name="attr_ids[]">
+                        <option>请选择...</option>
+                    <?php foreach($attr as $v):
+                        $_attr = explode(',',$gn['goods_attr_id']);
+                        if(in_array($v['id'],$_attr)){
+                            $select = 'selected=selected';
+                        }else{
+                            $select = '';
+                        }
+
+                    ?>
+                        <option value="<{$v.id}>" <{$select}>><{$v.attr_value}></option>
+                    <?php endforeach?>
+                    </select>
+                </td>
+                <?php endforeach?>
+                <td align="center">
+                    <input type="text" name="goods_num[]" value="<{$gn.goods_number}>">
+                </td>
+                <td align="center">
+                    <input type="button" value="<?php echo $key==0?'+':'-';?>" onclick="addNewTr(this)">
+                </td>
+
+            </tr>
+            <?php endforeach?>
+
+            <tr id="btn_submit">
+                <?php $count=count($data)+2?>
+                <td colspan="<{$count}>" align="center"><input type="submit" value="提交"></td>
+            </tr>
+
+        </table>
+
+
+    </div>
+</form>
+
+
+<script src="__PUBLIC__/umeditor1_2_2-utf8-php/third-party/jquery.min.js"></script>
+<script>
+    function addNewTr(ele){
+        var tr = $(ele).parent().parent();
+        var opt = $(ele).val();
+        if(opt=="+"){
+            var newtr = tr.clone();
+            newtr.find(":button").val('-')
+
+            $("#btn_submit").before(newtr);
+        }else {
+            tr.remove()
+        }
+
+    }
+
+
+
+
+
+</script>
+
+
+
+
+</html>

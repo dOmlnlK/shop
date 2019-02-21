@@ -1,0 +1,101 @@
+<layout name="layout" />
+
+<div class="main-div">
+    <form name="main_form" method="POST" action="__SELF__" enctype="multipart/form-data" >
+    	<input type="hidden" name="id" value="<?php echo $data['id']; ?>" />
+        <table cellspacing="1" cellpadding="3" width="100%">
+            <tr>
+                <td class="label">角色名称：</td>
+                <td>
+                    <input  type="text" name="role_name" value="<?php echo $data['role_name']; ?>" />
+                </td>
+            </tr>
+
+            <tr class="tron">
+                <td class="label">权限列表：</td>
+                <td>
+                    <?php foreach ($pri_list as $k => $v): ?>
+                    <?php echo str_repeat('-', 8*$v['level']); ?>
+                    <!--判断,1, 是否在 ,1,2,33,21,中-->
+                    <?php if(strpos(','.$rp_data['pri_id'].',',','.$v['id'].',')!==false):?>
+                    <?php $checked='checked=checked';?>
+                    <?php else:?>
+                    <?php $checked='';?>
+                    <?php endif?>
+                    <input <{$checked}> level_id=<{$v.level}> type="checkbox" name="pri_id[]" value="<{$v.id}>">
+                    <?php echo $v['pri_name']; ?><br>
+                    <?php endforeach; ?>
+                </td>
+
+            </tr>
+
+            <tr>
+                <td colspan="99" align="center">
+                    <input type="submit" class="button" value=" 确定 " />
+                    <input type="reset" class="button" value=" 重置 " />
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+
+<script src="__PUBLIC__/umeditor1_2_2-utf8-php/third-party/jquery.min.js"></script>
+<script>
+    $(":checkbox").click(function () {
+        var temp_level_id = $(this).attr('level_id');
+
+        if($(this).prop('checked')){
+
+            //让子权限也被选中
+            $(this).nextAll(':checkbox').each(function (k,v) {
+
+                if($(v).attr('level_id') > temp_level_id){
+                    $(v).prop('checked',"checked");
+                }
+                //遇到同级的权限后取消继续寻找子权限
+                if ($(v).attr('level_id') == temp_level_id) {
+                    return false;
+                }
+
+            })
+
+            //让上级权限也被选中
+            $(this).prevAll(':checkbox').each(function (k,v) {
+
+                if($(v).attr('level_id') < temp_level_id){
+                    $(v).prop('checked',"checked");
+
+                    temp_level_id--;
+                }
+
+
+            })
+
+
+        }else {
+
+            //让子权限也取消选中
+            $(this).nextAll(':checkbox').each(function (k,v) {
+
+                if($(v).attr('level_id') > temp_level_id){
+                    $(v).removeAttr('checked');
+                }
+
+                //遇到同级的权限后取消继续寻找子权限
+                if ($(v).attr('level_id') == temp_level_id) {
+                    return false;
+                }
+            })
+
+            //让上级权限也取消选中
+            $(this).prevAll(':checkbox').each(function (k,v) {
+
+                if($(v).attr('level_id') < temp_level_id){
+                    $(v).removeAttr('checked');
+                    temp_level_id--;
+                }
+            })
+        }
+    })
+</script>
